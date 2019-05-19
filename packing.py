@@ -14,6 +14,23 @@ def main(filename: str, idx = 1):
     visualize(m, n, result, idx)
 
 if __name__ == "__main__":
+    """
+    ---------------------------------------------------------------------------
+    (I)
+    To run the script, be sure python3 and gcc7 or higher version are installed
+    matplotlib and numpy are required
+
+    (II) 
+    Be sure the output filenames are:
+        ph.out
+        ffog.out
+        ffrg.out
+        nfog.out
+        nfrg.out
+        bfog.out
+        bfrg.out
+    ---------------------------------------------------------------------------
+    """
     os.system("make")
     os.system("./a.out")
     main("ph.out", 1)

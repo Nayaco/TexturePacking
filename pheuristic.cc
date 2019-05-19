@@ -19,6 +19,36 @@ void packing(int32_t, int32_t, int32_t, int32_t,
             vector<int32_t>&, 
             vector<int32_t>&);
 
+/**
+ * priority heuristic (PH) of solving texture packing problem
+ * 
+ * @ Function:
+ * [int32, [x:int32, y:int32, w:int32, h:int32][]] ph(int32, [w:int32, h:int32][])
+ * 
+ * @ Arguments:
+ * Argument name                |              Type            |           Deccription 
+ * template argument: order     |         width/height         | :to specific sorting column of rectangles
+ * width                        |         int32                | :the width of strip 
+ * rectangles                   |         RecList              | :rectangle dataset
+ * 
+ * @ Return Value
+ * height                       |         int32                | :the height of strip
+ * rectanglePosition            |         RecVec               | :the result of each recrangle
+ * 
+ * @ Example:
+ * 
+ * int main() {
+ *      RecList input { };
+ *      int32_t height;
+ *      RecVec  rectangles { };
+ *      input.push_back(RecTuple{1, 2});
+ *      input.push_back(RecTuple{2, 3});
+ *      input.push_back(RecTuple{3, 4});
+ *      input.push_back(RecTuple{4, 5});
+ *      
+ *      std::tie(height, rectangles) = ph(10, input);
+ * }
+**/
 template<Order order = width>
 tuple<int32_t, RecVec> ph(int32_t width, const RecList& rectangles) {
     int32_t ceilL = 0;
@@ -36,13 +66,12 @@ tuple<int32_t, RecVec> ph(int32_t width, const RecList& rectangles) {
     for(auto i = 0; i < remain.size(); ++i)
         if(remain[i][0] > remain[i][1])
             remain[i] = ~remain[i];
-            
-    auto sortedIndices = sort_indexes<RecTuple, RecLess<order>>(remain);
-    for(auto i: sortedIndices)
-        cout<<' '<<remain[i][0]<<' '<<remain[i][1]<<endl;
+    
+    auto sortedIndices = sort_indexes<RecTuple, RecLess<order>>(remain); // offline sorting of remain rectangles
+
     int32_t  x, y, w, h, H;
     x = y = w = h = H = 0;
-
+    
     while(1) {
         auto idx = pop(sortedIndices);
         if(idx < 0) break;
@@ -66,7 +95,7 @@ tuple<int32_t, RecVec> ph(int32_t width, const RecList& rectangles) {
                 resultX, 
                 resultY, 
                 resultW, 
-                resultH);
+                resultH); // fill left space
         x = 0, y = H;
     }
 
@@ -81,6 +110,10 @@ tuple<int32_t, RecVec> ph(int32_t width, const RecList& rectangles) {
     return make_tuple(ceilL, result);
 }
 
+
+/**
+ * recursively packing the recrangles into a strip
+**/
 void packing(int32_t x, int32_t y, int32_t w, int32_t h, 
             const RecList& remain, 
             vector<int32_t>& indices, 
@@ -96,16 +129,16 @@ void packing(int32_t x, int32_t y, int32_t w, int32_t h,
         int32_t idx = indices[i];
         if(idx >= 0){
             for(int32_t rot = 0; rot < 2; ++rot) {
-                if(priority > 1 && remain[idx][rot & 1] == w && remain[idx][rot ^ 1] == h)
+                if(priority > 1 && remain[idx][rot & 1] == w && remain[idx][rot ^ 1] == h)     // width = remain width & height = remain height
                     priority = 1, rotation = rot, best = idx, best_index = i;
-                else if(priority > 2 && remain[idx][rot & 1] == w && remain[idx][rot ^ 1] < h)
+                else if(priority > 2 && remain[idx][rot & 1] == w && remain[idx][rot ^ 1] < h) // width = remain width & height < remain height 
                     priority = 2, rotation = rot, best = idx, best_index = i;
-                else if(priority > 3 && remain[idx][rot & 1] < w && remain[idx][rot ^ 1] == h)
+                else if(priority > 3 && remain[idx][rot & 1] < w && remain[idx][rot ^ 1] == h) // width < remain width & height = remain height
                     priority = 3, rotation = rot, best = idx, best_index = i;
-                else if(priority > 4 && remain[idx][rot & 1] < w && remain[idx][rot ^ 1] < h)
+                else if(priority > 4 && remain[idx][rot & 1] < w && remain[idx][rot ^ 1] < h)  // width < remain width & height < remain height
                     priority = 4, rotation = rot, best = idx, best_index = i;
                 else if(priority > 5)
-                    priority = 5, rotation = rot, best = idx, best_index = i;
+                    priority = 5, rotation = rot, best = idx, best_index = i;                  // uncapable
             }
         }
     }

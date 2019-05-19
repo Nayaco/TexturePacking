@@ -6,19 +6,14 @@ from random import random
 def visualize(width, height, rectangles, i = 1):
     """
     Visualization of the a strip of size width x height with the layout of the rectangles.
-    The rectangles are annotated with their place in the input list on the figure.
 
     Parameters
     ----------
     width
-        size of the width of the strip
 
     height
-        size of the height of the strip
 
     rectangles : list of namedtuple('Rectangle', ['x', 'y', 'w', 'h'])
-        A list of rectangles. This contains bottom left x and y coordinate and
-        the width and height of every rectangle.
     """
     fig = plt.figure(i)
     axes = fig.add_subplot(1, 1, 1)

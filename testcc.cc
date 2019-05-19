@@ -5,7 +5,7 @@
 #include <functional>
 using namespace std;
 
-#include "heuristic.cc"
+#include "pheuristic.cc"
 #include "ffdh.cc"
 #include "nfdh.cc"
 #include "bfdh.cc"
