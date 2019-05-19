@@ -1,4 +1,5 @@
 .vscode
 __pycache__
-a.out
-res.outs
+*.out
+fnlist.txt
+test.cc
